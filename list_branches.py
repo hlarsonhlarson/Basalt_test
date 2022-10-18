@@ -44,14 +44,15 @@ def group_by_arch_field(branch_list):
 		packages_info[f"{version}_{elem['name']}"] = elem
 	return groups, packages_info
 
-def diff_of_packages(group1, group2):
+def diff_of_packages(group1, info_group1,group2, info_group2):
 	version_diff = dict()
 	for version in group1:
 		group1_packages = set(group1[version])
 		group2_packages = set()
 		if version in group2:
 			group2_packages = set(group2[version])
-		version_diff[version] = group1_packages - group2_packages
+		remaining_packages = group1_packages - group2_packages
+		version_diff[version] = [info_group1[f'{version}_{x}'] for x in remaining_packages]
 	return version_diff
 
 def show_latest_version(group1,info_group1,group2,info_group2):
@@ -66,8 +67,6 @@ def show_latest_version(group1,info_group1,group2,info_group2):
 			pack1 = info_group1[f'{version}_{package}']
 			pack2 = info_group2[f'{version}_{package}']
 			if pack1['version']+pack1['release'] > pack2['version']+pack2['release']:
-				print('PACK1: ', pack1)
-				print('PACK2: ', pack2)
 				latest_package_info.append(pack1)
 	return latest_package_info
 
@@ -75,7 +74,7 @@ def get_list_compare_branches():
 	branches = ['sisyphus','p10']
 	#res = asyncio.run(all_branches_list(branches))
 	res = simple_run(branches)
-	if len(res) != 2 and res[0] and res[1]:
+	if len(res) != 2 or not res[0] or not res[1]:
 		return 'Can\'t get information from API'
 	if res[0][0] == branches[0]:
 		sisyph = res[0][1]
@@ -85,8 +84,8 @@ def get_list_compare_branches():
 		p10 = res[0][1]
 	sisyph_groups, sisyph_packages_info = group_by_arch_field(sisyph)
 	p10_groups, p10_packages_info = group_by_arch_field(p10)
-	diff1 = diff_of_packages(sisyph_groups, p10_groups)
-	diff2 = diff_of_packages(p10_groups, sisyph_groups)
+	diff1 = diff_of_packages(sisyph_groups, sisyph_packages_info, p10_groups, p10_packages_info)
+	diff2 = diff_of_packages(p10_groups, p10_packages_info, sisyph_group,ssisyph_packages_info)
 	latest_versions = show_latest_version(sisyph_groups,
 						sisyph_packages_info,
 						p10_groups,
