@@ -1,6 +1,7 @@
 import requests
 import asyncio
 import pandas as pd
+import json
 from time import time
 
 
@@ -85,14 +86,18 @@ def get_list_compare_branches():
 	sisyph_groups, sisyph_packages_info = group_by_arch_field(sisyph)
 	p10_groups, p10_packages_info = group_by_arch_field(p10)
 	diff1 = diff_of_packages(sisyph_groups, sisyph_packages_info, p10_groups, p10_packages_info)
-	diff2 = diff_of_packages(p10_groups, p10_packages_info, sisyph_group,ssisyph_packages_info)
+	diff2 = diff_of_packages(p10_groups, p10_packages_info, sisyph_groups,sisyph_packages_info)
 	latest_versions = show_latest_version(sisyph_groups,
 						sisyph_packages_info,
 						p10_groups,
 						p10_packages_info)
-	print(latest_versions)
+	result_dict = {f'Extra packages {branches[0]}': diff1,
+			f'Extra packages {branches[1]}': diff2,
+			f'Latest packages {branches[0]}': latest_versions
+}
+	return json.dumps(result_dict,indent=4) 
 
 
 
 if __name__ == '__main__':
-	get_list_compare_branches()
+	print(get_list_compare_branches())
