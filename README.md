@@ -28,3 +28,9 @@ Then
 ```
 ./run_package_manager
 ```
+## Output
+You will get the json with fields Extra packages sisyphus (packages that are in sisyphus and not in p10),
+Extra packages p10 (packages that are in p10 and not in sisyphus),
+Latest packages sisyphus (packages that have bigger release-version in sisyphus)
+
+
