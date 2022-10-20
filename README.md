@@ -1,5 +1,5 @@
 # Basalt_test
-## Reuirments
+## Requirments
 1. Firstly if not installed, you need to install python3 and bash on your machine
 ```
 sudo apt-get install python3
